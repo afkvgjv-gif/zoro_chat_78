@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pulse Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --bg-elev: #16161a;
+    --bg-elev-2: #1d1d22;
+    --border: #2a2a30;
+    --text: #f5f5f5;
+    --text-dim: #9a9aa3;
+    --text-faint: #5e5e66;
+    --accent: #f59e0b;
+    --accent-soft: #fbbf24;
+    --accent-glow: rgba(245, 158, 11, 0.15);
+    --accent-glow-2: rgba(245, 158, 11, 0.08);
+    --danger: #ef4444;
+    --success: #10b981;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  h1, h2, h3, .brand {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- Views ---------- */
+  .view { display: none; height: 100dvh; }
+  .view.active { display: flex; }
+
+  /* ---------- Auth View ---------- */
+  .auth-view {
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background:
+      radial-gradient(1000px 600px at 20% 10%, rgba(245,158,11,0.06), transparent 60%),
+      radial-gradient(800px 500px at 80% 90%, rgba(245,158,11,0.04), transparent 60%),
+      var(--bg);
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px 32px;
+    box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6);
+    animation: fadeUp 0.4s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .auth-brand .brand-mark {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: radial-gradient(circle at 30% 30%, var(--accent-soft), var(--accent) 70%);
+    display: grid; place-items: center;
+    color: #1a1200;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    box-shadow: 0 0 0 1px rgba(245,158,11,0.3), 0 8px 24px -8px rgba(245,158,11,0.4);
+  }
+  .auth-brand h1 { font-size: 22px; font-weight: 600; }
+  .auth-brand p { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+
+  .tabs {
+    display: flex;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 22px;
+  }
+  .tab {
+    flex: 1;
+    padding: 9px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent), #d97706);
+    color: #1a1200;
+    box-shadow: 0 2px 8px -2px rgba(245,158,11,0.4);
+  }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .field .hint {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 6px;
+  }
+  .field .error {
+    font-size: 12px;
+    color: #fca5a5;
+    margin-top: 6px;
+    display: none;
+  }
+  .field.invalid input { border-color: rgba(239,68,68,0.5); }
+  .field.invalid .error { display: block; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--accent), #d97706);
+    color: #1a1200;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+  }
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px -6px rgba(245,158,11,0.5);
+  }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .auth-footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  /* ---------- Chat View ---------- */
+  .chat-view {
+    flex-direction: column;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    background: var(--bg);
+  }
+
+  .header {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: linear-gradient(180deg, var(--bg-elev) 0%, var(--bg) 100%);
+  }
+
+  .brand-wrap { display: flex; align-items: center; gap: 12px; }
+  .brand-mark-sm {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: radial-gradient(circle at 30% 30%, var(--accent-soft), var(--accent) 70%);
+    display: grid; place-items: center;
+    color: #1a1200;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    box-shadow: 0 0 0 1px rgba(245,158,11,0.3), 0 8px 24px -8px rgba(245,158,11,0.4);
+  }
+  .brand-text h1 { font-size: 17px; font-weight: 600; }
+  .brand-text p { font-size: 12px; color: var(--text-dim); margin-top: 1px; }
+
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .user-chip strong { color: var(--accent-soft); font-weight: 600; }
+
+  .icon-btn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover {
+    color: var(--text);
+    border-color: #3a3a42;
+    background: #22222a;
+  }
+  .icon-btn.danger:hover {
+    color: #fca5a5;
+    border-color: rgba(239,68,68,0.4);
+    background: rgba(239,68,68,0.08);
+  }
+
+  /* ---------- Messages ---------- */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+  }
+  .messages::-webkit-scrollbar { width: 8px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+  .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .msg {
+    display: flex;
+    flex-direction: column;
+    max-width: 78%;
+    animation: slideIn 0.25s ease-out;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg.own { align-self: flex-end; align-items: flex-end; }
+  .msg.other { align-self: flex-start; align-items: flex-start; }
+
+  .msg-meta {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+    padding: 0 4px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .msg-meta .user { color: var(--text-dim); font-weight: 500; }
+  .msg.own .msg-meta .user { color: var(--accent-soft); }
+
+  .bubble {
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 14.5px;
+    line-height: 1.45;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    border: 1px solid var(--border);
+  }
+  .msg.other .bubble {
+    background: var(--bg-elev-2);
+    color: var(--text);
+    border-top-left-radius: 4px;
+  }
+  .msg.own .bubble {
+    background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(245,158,11,0.08));
+    color: #fff5e0;
+    border: 1px solid rgba(245,158,11,0.35);
+    border-top-right-radius: 4px;
+    box-shadow: 0 4px 14px -6px rgba(245,158,11,0.25);
+  }
+
+  .system-msg {
+    align-self: center;
+    font-size: 12px;
+    color: var(--text-faint);
+    padding: 6px 14px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    margin: 4px 0;
+  }
+
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-faint);
+    padding: 40px;
+  }
+  .empty-state .icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--accent-glow-2);
+    border: 1px solid rgba(245,158,11,0.2);
+    display: grid; place-items: center;
+    margin-bottom: 16px;
+    color: var(--accent);
+  }
+  .empty-state h3 { font-size: 16px; color: var(--text-dim); margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; }
+
+  /* ---------- Composer ---------- */
+  .composer {
+    padding: 14px 18px 18px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-elev);
+  }
+  .composer-form {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 8px 8px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .composer-form:focus-within {
+    border-color: rgba(245,158,11,0.5);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .composer-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    resize: none;
+    max-height: 120px;
+    min-height: 24px;
+    padding: 6px 0;
+    line-height: 1.4;
+  }
+  .composer-input::placeholder { color: var(--text-faint); }
+
+  .send-btn {
+    background: linear-gradient(135deg, var(--accent), #d97706);
+    color: #1a1200;
+    border: none;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+    flex-shrink: 0;
+  }
+  .send-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px -4px rgba(245,158,11,0.5);
+  }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+  .toast.success { border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+
+  /* ---------- Loading ---------- */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(26,18,0,0.3);
+    border-top-color: #1a1200;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 600px) {
+    .header { padding: 14px 16px; }
+    .messages { padding: 16px; }
+    .composer { padding: 12px 14px 16px; }
+    .msg { max-width: 88%; }
+    .brand-text h1 { font-size: 15px; }
+    .brand-text p { font-size: 11px; }
+    .user-chip { padding: 5px 10px; font-size: 12px; }
+    .auth-card { padding: 28px 22px 24px; }
+    .auth-brand h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== AUTH VIEW ===================== -->
+<div class="view auth-view active" id="authView">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">P</div>
+      <div>
+        <h1>Pulse Chat</h1>
+        <p>Sign in to continue</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="login">Log in</button>
+      <button class="tab" data-tab="signup">Create account</button>
+    </div>
+
+    <form id="authForm" autocomplete="off">
+      <div class="field" id="usernameField">
+        <label for="usernameInput">Username</label>
+        <input type="text" id="usernameInput" placeholder="e.g. alex" maxlength="20" autocomplete="username" />
+        <div class="error" id="usernameError">Username required</div>
+      </div>
+
+      <div class="field" id="passwordField">
+        <label for="passwordInput">Password</label>
+        <input type="password" id="passwordInput" placeholder="At least 6 characters" maxlength="64" autocomplete="current-password" />
+        <div class="error" id="passwordError">Password must be at least 6 characters</div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="authSubmit">Log in</button>
+    </form>
+
+    <div class="auth-footer">
+      Your data is stored securely via JSONBin.
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CHAT VIEW ===================== -->
+<div class="view chat-view" id="chatView">
+  <header class="header">
+    <div class="brand-wrap">
+      <div class="brand-mark-sm">P</div>
+      <div class="brand-text">
+        <h1>Pulse Chat</h1>
+        <p id="roomInfo">Global room</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="user-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <strong id="currentUser"></strong>
+      </div>
+      <button class="icon-btn danger" id="logoutBtn" title="Log out">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="messages" id="messages">
+    <div class="empty-state" id="emptyState">
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <h3>No messages yet</h3>
+      <p>Be the first to say something.</p>
+    </div>
+  </main>
+
+  <div class="composer">
+    <form class="composer-form" id="composerForm">
+      <textarea
+        class="composer-input"
+        id="messageInput"
+        placeholder="Type a message..."
+        rows="1"
+        autocomplete="off"
+      ></textarea>
+      <button type="submit" class="send-btn" id="sendBtn" disabled title="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   Pulse Chat — JSONBin-backed chat with user accounts
+   ========================================================= */
+
+const CONFIG = {
+  MASTER_KEY: '$2a$10$kmOPuf1FKEe/yMEKDxSan.aBGLBO.s04WEkVH7.fsZlFRk4Tz1LE2',
+  ACCESS_KEY: '$2a$10$twubWIzV3LiALOnO0r83VuA4gq2q/sgE1Q5Lz8YhJipxFh9.CNXr6',
+  API_BASE: 'https://api.jsonbin.io/v3/b',
+  REFRESH_MS: 3000,
+  MAX_MESSAGES: 200,
+  STORAGE_KEY: 'pulse_chat_session',
+  HASH_PEPPER: 'pulse::v1::' // simple salt/pepper for SHA-256
+};
+
+/* ---------- State ---------- */
+const state = {
+  username: null,
+  usersBinId: null,
+  messagesBinId: null,
+  messages: [],
+  sending: false,
+  authMode: 'login' // 'login' | 'signup'
+};
+
+/* ---------- DOM ---------- */
+const $ = (id) => document.getElementById(id);
+const authView = $('authView');
+const chatView = $('chatView');
+const authForm = $('authForm');
+const authSubmit = $('authSubmit');
+const usernameInput = $('usernameInput');
+const passwordInput = $('passwordInput');
+const usernameField = $('usernameField');
+const passwordField = $('passwordField');
+const usernameError = $('usernameError');
+const passwordError = $('passwordError');
+const messagesEl = $('messages');
+const emptyState = $('emptyState');
+const messageInput = $('messageInput');
+const sendBtn = $('sendBtn');
+const composerForm = $('composerForm');
+const currentUserEl = $('currentUser');
+const logoutBtn = $('logoutBtn');
+const roomInfoEl = $('roomInfo');
+const toastEl = $('toast');
+
+/* ---------- Helpers ---------- */
+function saveSession() {
+  localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify({
+    username: state.username,
+    usersBinId: state.usersBinId,
+    messagesBinId: state.messagesBinId
+  }));
+}
+
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(CONFIG.STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+
+function clearSession() {
+  localStorage.removeItem(CONFIG.STORAGE_KEY);
+}
+
+function showToast(msg, type = 'info') {
+  toastEl.textContent = msg;
+  toastEl.classList.remove('error', 'success');
+  if (type === 'error') toastEl.classList.add('error');
+  if (type === 'success') toastEl.classList.add('success');
+  toastEl.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toastEl.classList.remove('show'), 2800);
+}
+
+function formatTime(ts) {
+  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function normalizeUsername(u) {
+  return (u || '').trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '');
+}
+
+/* ---------- Crypto: SHA-256 ---------- */
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function hashPassword(password, username) {
+  // Salt with username + pepper to prevent rainbow tables
+  const salted = `${CONFIG.HASH_PEPPER}${username.toLowerCase()}:${password}`;
+  return sha256(salted);
+}
+
+/* ---------- JSONBin API ---------- */
+async function createBin(name, initialData) {
+  const res = await fetch(CONFIG.API_BASE, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': CONFIG.MASTER_KEY,
+      'X-Bin-Name': name
+    },
+    body: JSON.stringify(initialData)
+  });
+  if (!res.ok) throw new Error('Create failed: ' + res.status);
+  const data = await res.json();
+  return data.metadata.id;
+}
+
+async function getBin(binId) {
+  const res = await fetch(`${CONFIG.API_BASE}/${binId}/latest`, {
+    headers: { 'X-Master-Key': CONFIG.MASTER_KEY }
+  });
+  if (res.status === 404) throw new Error('Not found');
+  if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+  const data = await res.json();
+  return data.record;
+}
+
+async function putBin(binId, record) {
+  const res = await fetch(`${CONFIG.API_BASE}/${binId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': CONFIG.MASTER_KEY
+    },
+    body: JSON.stringify(record)
+  });
+  if (!res.ok) throw new Error('Update failed: ' + res.status);
+  return res.json();
+}
+
+/* ---------- Users Bin helpers ---------- */
+async function ensureUsersBin() {
+  if (state.usersBinId) return state.usersBinId;
+  const id = await createBin('pulse-chat-users', { users: {} });
+  state.usersBinId = id;
+  return id;
+}
+
+async function ensureMessagesBin() {
+  if (state.messagesBinId) return state.messagesBinId;
+  const id = await createBin('pulse-chat-messages', { messages: [] });
+  state.messagesBinId = id;
+  return id;
+}
+
+/* ---------- Auth ---------- */
+async function signUp(username, password) {
+  const normalized = normalizeUsername(username);
+  if (!normalized) throw new Error('Invalid username');
+  if (password.length < 6) throw new Error('Password too short');
+
+  await ensureUsersBin();
+  const record = await getBin(state.usersBinId);
+  const users = record?.users || {};
+
+  if (users[normalized]) {
+    throw new Error('Username already taken');
+  }
+
+  const hash = await hashPassword(password, normalized);
+  users[normalized] = {
+    display: username.trim(),
+    hash,
+    created: Date.now()
+  };
+
+  await putBin(state.usersBinId, { users });
+
+  // Also ensure messages bin exists for this user's session
+  await ensureMessagesBin();
+
+  return normalized;
+}
+
+async function logIn(username, password) {
+  const normalized = normalizeUsername(username);
+  if (!normalized) throw new Error('Invalid username');
+
+  await ensureUsersBin();
+  const record = await getBin(state.usersBinId);
+  const users = record?.users || {};
+  const user = users[normalized];
+
+  if (!user) throw new Error('Account not found');
+
+  const hash = await hashPassword(password, normalized);
+  if (hash !== user.hash) throw new Error('Incorrect password');
+
+  // Ensure messages bin exists
+  await ensureMessagesBin();
+
+  return normalized;
+}
+
+/* ---------- Enter chat ---------- */
+async function enterChat(username) {
+  state.username = username;
+  currentUserEl.textContent = username;
+  roomInfoEl.textContent = 'Global room';
+  saveSession();
+
+  authView.classList.remove('active');
+  chatView.classList.add('active');
+
+  messageInput.focus();
+  await refreshMessages();
+  startPolling();
+}
+
+function exitChat() {
+  stopPolling();
+  state.username = null;
+  state.messages = [];
+  clearSession();
+
+  chatView.classList.remove('active');
+  authView.classList.add('active');
+
+  // Reset form
+  passwordInput.value = '';
+  usernameInput.value = '';
+  clearFieldErrors();
+  usernameInput.focus();
+}
+
+/* ---------- Rendering ---------- */
+function renderMessages() {
+  [...messagesEl.querySelectorAll('.msg, .system-msg')].forEach(n => n.remove());
+
+  if (state.messages.length === 0) {
+    emptyState.style.display = 'flex';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  const frag = document.createDocumentFragment();
+
+  state.messages.forEach(m => {
+    if (m.type === 'system') {
+      const el = document.createElement('div');
+      el.className = 'system-msg';
+      el.textContent = m.text;
+      frag.appendChild(el);
+      return;
+    }
+
+    const isOwn = m.user === state.username;
+    const msgEl = document.createElement('div');
+    msgEl.className = 'msg ' + (isOwn ? 'own' : 'other');
+    msgEl.dataset.id = m.id;
+
+    msgEl.innerHTML = `
+      <div class="msg-meta">
+        <span class="user">${escapeHtml(m.user)}</span>
+        <span>${formatTime(m.ts)}</span>
+      </div>
+      <div class="bubble">${escapeHtml(m.text)}</div>
+    `;
+    frag.appendChild(msgEl);
+  });
+
+  messagesEl.appendChild(frag);
+
+  const nearBottom = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 120;
+  if (nearBottom) messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+/* ---------- Chat actions ---------- */
+async function sendMessage(text) {
+  if (state.sending) return;
+  state.sending = true;
+  sendBtn.disabled = true;
+
+  try {
+    const record = await getBin(state.messagesBinId);
+    const msgs = Array.isArray(record?.messages) ? record.messages : [];
+    msgs.push({
+      type: 'message',
+      user: state.username,
+      text: text.trim(),
+      ts: Date.now(),
+      id: uid()
+    });
+    if (msgs.length > CONFIG.MAX_MESSAGES) msgs.splice(0, msgs.length - CONFIG.MAX_MESSAGES);
+    await putBin(state.messagesBinId, { messages: msgs });
+    await refreshMessages();
+  } catch (e) {
+    console.error(e);
+    showToast('Failed to send message', 'error');
+  } finally {
+    state.sending = false;
+    sendBtn.disabled = messageInput.value.trim().length === 0;
+  }
+}
+
+async function refreshMessages() {
+  try {
+    const record = await getBin(state.messagesBinId);
+    const msgs = Array.isArray(record?.messages) ? record.messages : [];
+    msgs.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+    state.messages = msgs;
+    renderMessages();
+  } catch (e) {
+    console.warn('Refresh failed', e);
+  }
+}
+
+let pollTimer = null;
+function startPolling() {
+  stopPolling();
+  pollTimer = setInterval(refreshMessages, CONFIG.REFRESH_MS);
+}
+function stopPolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+}
+
+/* ---------- Field validation UI ---------- */
+function clearFieldErrors() {
+  usernameField.classList.remove('invalid');
+  passwordField.classList.remove('invalid');
+}
+
+function setFieldError(field, errorEl, msg) {
+  field.classList.add('invalid');
+  errorEl.textContent = msg;
+}
+
+/* ---------- Auto-resize textarea ---------- */
+function autoResize() {
+  messageInput.style.height = 'auto';
+  messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+}
+
+/* ---------- Events ---------- */
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    state.authMode = tab.dataset.tab;
+    authSubmit.textContent = state.authMode === 'login' ? 'Log in' : 'Create account';
+    passwordInput.setAttribute('autocomplete',
+      state.authMode === 'login' ? 'current-password' : 'new-password');
+    clearFieldErrors();
+  });
+});
+
+// Auth submit
+authForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearFieldErrors();
+
+  const username = usernameInput.value;
+  const password = passwordInput.value;
+
+  // Basic validation
+  let valid = true;
+  if (!username.trim()) {
+    setFieldError(usernameField, usernameError, 'Username is required');
+    valid = false;
+  } else if (normalizeUsername(username).length < 2) {
+    setFieldError(usernameField, usernameError, 'Username must be at least 2 characters');
+    valid = false;
+  }
+  if (password.length < 6) {
+    setFieldError(passwordField, passwordError, 'Password must be at least 6 characters');
+    valid = false;
+  }
+  if (!valid) return;
+
+  authSubmit.disabled = true;
+  const originalText = authSubmit.textContent;
+  authSubmit.innerHTML = '<span class="spinner"></span>' + (state.authMode === 'login' ? 'Signing in...' : 'Creating...');
+
+  try {
+    let normalized;
+    if (state.authMode === 'signup') {
+      normalized = await signUp(username, password);
+      showToast('Account created', 'success');
+    } else {
+      normalized = await logIn(username, password);
+    }
+    await enterChat(normalized);
+  } catch (e) {
+    console.error(e);
+    const msg = e.message || 'Something went wrong';
+    if (msg.includes('taken')) setFieldError(usernameField, usernameError, msg);
+    else if (msg.includes('not found') || msg.includes('Incorrect')) {
+      setFieldError(passwordField, passwordError, msg);
+    } else {
+      showToast(msg, 'error');
+    }
+  } finally {
+    authSubmit.disabled = false;
+    authSubmit.textContent = originalText;
+  }
+});
+
+// Logout
+logoutBtn.addEventListener('click', () => {
+  if (confirm('Log out of Pulse Chat?')) {
+    exitChat();
+    showToast('Signed out');
+  }
+});
+
+// Composer
+messageInput.addEventListener('input', () => {
+  autoResize();
+  sendBtn.disabled = messageInput.value.trim().length === 0;
+});
+
+messageInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    if (messageInput.value.trim()) composerForm.requestSubmit();
+  }
+});
+
+composerForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const text = messageInput.value.trim();
+  if (!text) return;
+  messageInput.value = '';
+  autoResize();
+  sendBtn.disabled = true;
+  sendMessage(text);
+});
+
+/* ---------- Init ---------- */
+(async function init() {
+  const session = loadSession();
+  if (session?.username && session?.usersBinId && session?.messagesBinId) {
+    // Restore session
+    state.username = session.username;
+    state.usersBinId = session.usersBinId;
+    state.messagesBinId = session.messagesBinId;
+
+    // Verify user still exists
+    try {
+      const record = await getBin(state.usersBinId);
+      const normalized = normalizeUsername(session.username);
+      if (record?.users?.[normalized]) {
+        await enterChat(session.username);
+        return;
+      } else {
+        // Account deleted
+        clearSession();
+        showToast('Session expired — please sign in again', 'error');
+      }
+    } catch (e) {
+      console.warn('Session restore failed', e);
+      showToast('Could not restore session', 'error');
+      clearSession();
+    }
+  }
+  usernameInput.focus();
+})();
+</script>
+</body>
+</html>
