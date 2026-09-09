@@ -38,7 +38,6 @@
     line-height: 1.6;
   }
 
-  /* Animated gradient background */
   .bg-gradient {
     position: fixed;
     inset: 0;
@@ -70,7 +69,6 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* NAV */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -119,6 +117,7 @@
     letter-spacing: 0.5px;
     transition: color 0.3s;
     position: relative;
+    cursor: pointer;
   }
   .nav-links a:hover { color: var(--primary); }
   .nav-links a::after {
@@ -134,7 +133,6 @@
   .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
   .burger span { width: 25px; height: 2px; background: var(--text); transition: 0.3s; }
 
-  /* HERO */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -267,7 +265,6 @@
   }
   .stat p { color: var(--text-dim); font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
 
-  /* SECTIONS */
   section { padding: 6rem 2rem; position: relative; }
   .container { max-width: 1300px; margin: 0 auto; }
 
@@ -302,7 +299,6 @@
     margin: 0 auto;
   }
 
-  /* SERVICES */
   .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -354,7 +350,6 @@
   }
   .service-card p { color: var(--text-dim); font-size: 0.95rem; }
 
-  /* PROCESS */
   .process-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -385,11 +380,11 @@
   }
   .process-step p { color: var(--text-dim); font-size: 0.9rem; }
 
-  /* FORM */
   .form-section {
     background: var(--bg-2);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+    scroll-margin-top: 80px;
   }
   .form-wrapper {
     max-width: 780px;
@@ -440,7 +435,6 @@
   }
   .form-group textarea { resize: vertical; min-height: 130px; }
 
-  /* FOOTER */
   footer {
     padding: 3rem 2rem 2rem;
     background: var(--bg-2);
@@ -458,43 +452,13 @@
     color: transparent;
     margin-bottom: 1rem;
   }
-  .footer-socials {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin: 1.5rem 0;
-  }
-  .footer-socials a {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-dim);
-    text-decoration: none;
-    transition: all 0.3s;
-  }
-  .footer-socials a:hover {
-    background: var(--primary);
-    color: #fff;
-    transform: translateY(-3px);
-  }
   .footer-bottom {
     padding-top: 1.5rem;
     border-top: 1px solid var(--border);
     color: var(--text-dim);
     font-size: 0.85rem;
   }
-  .footer-hint {
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    margin-top: 0.5rem;
-    font-style: italic;
-  }
 
-  /* MODAL */
   .modal-overlay {
     position: fixed;
     inset: 0;
@@ -579,7 +543,6 @@
     min-height: 1.2em;
   }
 
-  /* ADMIN PANEL */
   .admin-panel {
     position: fixed;
     inset: 0;
@@ -818,6 +781,7 @@
     align-items: center;
     gap: 0.3rem;
     font-family: 'Inter', sans-serif;
+    text-decoration: none;
   }
   .action-btn:hover {
     color: var(--primary);
@@ -851,7 +815,6 @@
     margin-bottom: 0.5rem;
   }
 
-  /* TOAST */
   .toast {
     position: fixed;
     bottom: 2rem;
@@ -887,7 +850,6 @@
     color: var(--danger);
   }
 
-  /* RESPONSIVE */
   @media (max-width: 900px) {
     nav { padding: 1rem 1.5rem; }
     .nav-links {
@@ -938,7 +900,6 @@
     .requests-table td.actions-cell::before { display: none; }
   }
 
-  /* Scrollbar */
   ::-webkit-scrollbar { width: 10px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb {
@@ -946,7 +907,6 @@
     border-radius: 10px;
   }
 
-  /* Reveal */
   .reveal {
     opacity: 0;
     transform: translateY(30px);
@@ -963,31 +923,29 @@
 <div class="bg-gradient"></div>
 <div class="noise"></div>
 
-<!-- NAVIGATION -->
 <nav>
-  <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">ZORO<span>DEV</span></div>
+  <div class="logo" onclick="scrollToSection('home')">ZORO<span>DEV</span></div>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#process">Process</a></li>
-    <li><a href="#request">Request Project</a></li>
+    <li><a onclick="scrollToSection('home')">Home</a></li>
+    <li><a onclick="scrollToSection('services')">Services</a></li>
+    <li><a onclick="scrollToSection('process')">Process</a></li>
+    <li><a onclick="scrollToSection('request')">Request Project</a></li>
   </ul>
   <button class="burger" id="burger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
-<!-- HERO -->
 <section class="hero" id="home">
   <div class="hero-content">
     <span class="hero-tag">Premium Digital Studio</span>
     <h1>We Build <span class="accent">Digital</span><br>Experiences That Matter</h1>
     <p>ZORO DEV is a boutique development studio crafting premium websites, web applications, and digital products for ambitious brands around the world.</p>
     <div class="hero-buttons">
-      <a href="#request" class="btn btn-primary">Start Your Project
+      <a class="btn btn-primary" onclick="scrollToSection('request')" style="cursor: pointer;">Start Your Project
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="#services" class="btn btn-outline">Our Services</a>
+      <a class="btn btn-outline" onclick="scrollToSection('services')" style="cursor: pointer;">Our Services</a>
     </div>
     <div class="hero-stats">
       <div class="stat"><h3>120+</h3><p>Projects Delivered</p></div>
@@ -998,7 +956,6 @@
   </div>
 </section>
 
-<!-- SERVICES -->
 <section id="services">
   <div class="container">
     <div class="section-header reveal">
@@ -1053,7 +1010,6 @@
   </div>
 </section>
 
-<!-- PROCESS -->
 <section id="process" style="background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
   <div class="container">
     <div class="section-header reveal">
@@ -1086,7 +1042,6 @@
   </div>
 </section>
 
-<!-- REQUEST FORM -->
 <section id="request" class="form-section">
   <div class="container">
     <div class="section-header reveal">
@@ -1142,25 +1097,16 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-content">
     <div class="footer-logo">ZORO DEV</div>
     <p style="color: var(--text-dim); max-width: 500px; margin: 0 auto;">Crafting premium digital experiences for ambitious brands worldwide.</p>
-    <div class="footer-socials">
-      <a href="#" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
-      <a href="#" aria-label="Twitter"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
-      <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg></a>
-      <a href="#" aria-label="Dribbble"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg></a>
-    </div>
     <div class="footer-bottom">
       &copy; 2026 ZORO DEV. All rights reserved. Crafted with precision.
-      <div class="footer-hint">Admin access: press Ctrl + I</div>
     </div>
   </div>
 </footer>
 
-<!-- LOGIN MODAL -->
 <div class="modal-overlay" id="loginModal">
   <div class="modal">
     <button class="modal-close" id="closeModal" aria-label="Close">
@@ -1182,7 +1128,6 @@
   </div>
 </div>
 
-<!-- ADMIN PANEL -->
 <div class="admin-panel" id="adminPanel">
   <div class="admin-header">
     <div class="admin-header-left">
@@ -1230,14 +1175,11 @@
         <h3>Client Requests</h3>
         <input type="text" class="search-box" id="searchBox" placeholder="Search by name, email, project...">
       </div>
-      <div id="requestsContainer">
-        <!-- Table injected here -->
-      </div>
+      <div id="requestsContainer"></div>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast">
   <div class="toast-icon">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1249,7 +1191,16 @@
 </div>
 
 <script>
-  // ============ STORAGE ============
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      const offset = 80;
+      const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+    document.getElementById('navLinks').classList.remove('open');
+  }
+
   const STORAGE_KEY = 'zoroDevRequests';
   const ADMIN_PASSWORD = '987654321';
 
@@ -1262,7 +1213,6 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }
 
-  // ============ TOAST ============
   const toast = document.getElementById('toast');
   const toastTitle = document.getElementById('toastTitle');
   const toastMsg = document.getElementById('toastMsg');
@@ -1276,15 +1226,10 @@
     toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
   }
 
-  // ============ NAV ============
   const burger = document.getElementById('burger');
   const navLinks = document.getElementById('navLinks');
   burger.addEventListener('click', () => navLinks.classList.toggle('open'));
-  document.querySelectorAll('.nav-links a').forEach(a => {
-    a.addEventListener('click', () => navLinks.classList.remove('open'));
-  });
 
-  // ============ FORM ============
   const form = document.getElementById('projectForm');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1305,7 +1250,6 @@
     showToast('Request Sent', 'We will get back to you within 24 hours.');
   });
 
-  // ============ LOGIN MODAL ============
   const loginModal = document.getElementById('loginModal');
   const loginForm = document.getElementById('loginForm');
   const loginError = document.getElementById('loginError');
@@ -1326,7 +1270,7 @@
     if (e.target === loginModal) closeLogin();
   });
 
-  // Ctrl+I shortcut
+  // Secret shortcut - Ctrl+I (no hint shown anywhere)
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && (e.key === 'i' || e.key === 'I')) {
       e.preventDefault();
@@ -1352,7 +1296,6 @@
     }
   });
 
-  // ============ ADMIN PANEL ============
   const adminPanel = document.getElementById('adminPanel');
   const requestsContainer = document.getElementById('requestsContainer');
   const searchBox = document.getElementById('searchBox');
@@ -1444,7 +1387,6 @@
         )
       : list;
 
-    // Stats
     const total = list.length;
     const contacted = list.filter(r => r.status === 'contacted').length;
     const newCount = total - contacted;
@@ -1533,7 +1475,6 @@
     html += '</tbody></table>';
     requestsContainer.innerHTML = html;
 
-    // Bind actions
     requestsContainer.querySelectorAll('[data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.dataset.id;
@@ -1572,7 +1513,6 @@
     showToast('Updated', r.status === 'contacted' ? 'Marked as contacted.' : 'Marked as new.');
   }
 
-  // ============ SCROLL REVEAL ============
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -1580,7 +1520,6 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  // ============ NAV SHADOW ON SCROLL ============
   window.addEventListener('scroll', () => {
     const nav = document.querySelector('nav');
     nav.style.boxShadow = window.scrollY > 50 ? '0 10px 30px rgba(0,0,0,0.3)' : 'none';
